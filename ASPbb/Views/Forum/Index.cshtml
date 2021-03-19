@@ -1,0 +1,74 @@
+﻿@model IEnumerable<ASPbb.Models.Forum>;
+@using ASPbb.Utility;
+
+@{
+    ViewData["Title"] = "ASPbb | Forums";
+}
+
+@if (User.IsInRole(SD.Role_Admin))
+{
+    <div class="page-header mb-3">
+        <a class="btn btn-primary" asp-controller="Forum" asp-action="Upsert">Create Forum</a>
+    </div>
+}
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Topics</th>
+            <th>Posts</th>
+            <th>Last Post</th>
+            @if (User.IsInRole(SD.Role_Admin))
+            {
+                <th>Edit</th>
+                <th>Delete</th>
+            }
+        </tr>
+    </thead>
+    @if (Model.Count() > 0)
+    {
+        <tbody>
+            @foreach (var forum in Model)
+            {
+                <tr>
+                    <td>
+                        <a asp-action="Show" asp-route-id="@forum.Id">@forum.Name</a>
+                        <small class="text-muted d-block">@forum.Description</small>
+                    </td>
+                    <td>@forum.TopicsCount</td>
+                    <td>@forum.PostsCount</td>
+                    <td>
+                        @if (@forum.Topics.Count > 0 && @forum.Topics.First().Posts.Count > 0)
+                        {
+                            <small>
+                                <span>in</span>
+                                <a asp-controller="Topic" asp-action="Show" asp-route-id="@forum.Topics.First().Id">@forum.Topics.First().Name</a>
+                                @if (forum.Topics.First().Posts.Count() > 0)
+                                {
+                                    <p>
+                                        <span>by @forum.Topics.First().Posts.First().ApplicationUser.Email</span>
+                                        <span class="d-block text-muted">@forum.Topics.First().Posts.First().UpdatedDate</span>
+                                    </p>
+                                }
+                            </small>
+                        }
+                        </td>
+                    @if (User.IsInRole(SD.Role_Admin))
+                    {
+                        <td>
+                            <a class="btn btn-info" asp-action="Upsert" asp-route-id="@forum.Id">Edit</a>
+                        </td>
+                        <td>
+                            <a class="btn btn-danger" href="#" onclick="Delete('/Forum/Delete/@forum.Id'); return false;">Delete</a>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    }
+</table>
+
+@if (Model.Count() == 0)
+{
+    <p class="text-center text-muted">No forums</p>
+}

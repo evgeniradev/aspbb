@@ -1,0 +1,69 @@
+﻿@model ASPbb.Models.Forum;
+@using ASPbb.Utility;
+
+@{
+    ViewData["Title"] = "ASPbb | Topics";
+}
+
+<div class="page-header mb-3">
+    <h4 class="align-bottom mb-3">@Model.Name</h4>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <a class="btn btn-primary" asp-controller="Topic" asp-action="Upsert" asp-route-forumId="@Model.Id">Create Topic</a>
+    }
+    <a class="btn btn-success" asp-controller="Forum" asp-action="Index">Back to Forums</a>
+</div>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Posts</th>
+            <th>Last Post</th>
+            @if (User.IsInRole(SD.Role_Admin))
+            {
+                <th>Edit</th>
+                <th>Delete</th>
+            }
+        </tr>
+    </thead>
+    @if (Model.Topics.Count() > 0)
+    {
+        <tbody>
+            @foreach (var topic in Model.Topics)
+            {
+                <tr>
+                    <td>
+                        <a asp-controller="Topic" asp-action="Show" asp-route-id="@topic.Id">@topic.Name</a>
+                    </td>
+                    <td>@topic.PostsCount</td>
+                    <td>
+                        @if (@topic.Posts.Count() > 0)
+                        {
+                            <small>
+                                <p>
+                                    <span>by @topic.Posts.First().ApplicationUser.Email</span>
+                                    <span class="d-block text-muted">@topic.Posts.First().UpdatedDate</span>
+                                </p>
+                            </small>
+                        }
+                    </td>
+
+                    @if (User.IsInRole(SD.Role_Admin))
+                    {
+                        <td>
+                            <a class="btn btn-info" asp-controller="Topic" asp-action="Upsert" asp-route-id="@topic.Id">Edit</a>
+                        </td>
+                        <td>
+                            <a class="btn btn-danger" href="#" onclick="Delete('/Topic/Delete/@topic.Id'); return false;">Delete</a>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+     }
+</table>
+
+@if (Model.Topics.Count() == 0)
+{
+    <p class="text-center text-muted">No topics</p>
+}

@@ -1,0 +1,39 @@
+﻿@model ASPbb.Models.Topic;
+@using ASPbb.Utility;
+
+@{
+    ViewData["Title"] = "ASPbb | " + @Model.Name;
+}
+
+<div class="page-header mb-3">
+    <h4 class="align-bottom mb-3">@Model.Name</h4>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <a class="btn btn-primary" asp-controller="Post" asp-action="Upsert" asp-route-topicId="@Model.Id">Create Post</a>
+    }
+    <a class="btn btn-success" asp-controller="Forum" asp-action="Show" asp-route-id="@Model.ForumId">Back to Forum</a>
+</div>
+@if (Model.Posts.Count() > 0)
+{
+    @foreach (var post in Model.Posts)
+    {
+        <div class="card card-body bg-light mb-3">
+            <div class="card-body">
+                <small class="card-subtitle mb-0 text-muted font-weight-normal">
+                    @(post.ApplicationUser.Email) wrote:
+                </small>
+                <p class="card-text mb-4 mt-4">@post.Content</p>
+                <small class="card-text mb-0 text-muted">Post Last Modified: @post.UpdatedDate</small>
+                @if (User.IsInRole(SD.Role_Admin))
+                {
+                    <a class="btn btn-danger float-right ml-2" href="#" onclick="Delete('/Post/Delete/@post.Id'); return false;">Delete</a>
+                    <a class="btn btn-info float-right" asp-controller="Post" asp-action="Upsert" asp-route-id="@post.Id">Edit</a>
+                }
+            </div>
+        </div>
+    }
+}
+else
+{
+    <p class="text-center text-muted">No posts</p>
+}

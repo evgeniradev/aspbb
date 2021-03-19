@@ -1,0 +1,47 @@
+﻿@model ASPbb.Models.Post;
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "ASPbb | Create Post";
+}
+
+<form method="post">
+    <div class="row p-3 border">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        @if (Model.Id != 0)
+        {
+            ViewData["Title"] = "ASPbb | Edit Post";
+        }
+        <div class="col-12 border-bottom">
+            <h2 class="text-primary">@ViewData["Title"]</h2>
+        </div>
+        <div class="col-8 pt-4">
+            <input type="hidden" asp-for="TopicId" />
+            <div class="form-group row">
+                <div class="col-4">
+                    <label asp-for="Content"></label>
+                </div>
+                <div class="col-8">
+                    <textarea asp-for="Content" class="form-control"></textarea>
+                    <span asp-validation-for="Content" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-8 offset-4">
+                    @if (Model.Id != 0)
+                    {
+                        <partial name="_EditButton" model="@Model.Id" />
+                    }
+                    else
+                    {
+                        <partial name="_CreateButton" />
+                    }
+                    <a asp-controller="Topic" asp-action="Show" asp-route-id="@Model.TopicId" class="btn btn-success">Back to List</a>
+                </div>
+            </div>
+        </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

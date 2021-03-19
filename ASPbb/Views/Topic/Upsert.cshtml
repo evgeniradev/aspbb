@@ -1,0 +1,66 @@
+﻿@model ASPbb.Models.Topic;
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "ASPbb | Create Topic";
+}
+
+<form method="post">
+    <div class="row p-3 border">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        @if (Model.Id != 0)
+        {
+            ViewData["Title"] = "ASPbb | Edit Topic";
+        }
+        <div class="col-12 border-bottom">
+            <h2 class="text-primary">@ViewData["Title"]</h2>
+        </div>
+        <div class="col-8 pt-4">
+            <input type="hidden" asp-for="ForumId" />
+            <div class="form-group row">
+                <div class="col-4">
+                    <label asp-for="Name"></label>
+                </div>
+                <div class="col-8">
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-4">
+                    <label for="Content">Content</label>
+                </div>
+                <div class="col-8">
+                    @{
+                        var content = "";
+                        if (Model.Id > 0)
+                        {
+                            if (Model.Posts.Count() > 0)
+                            {
+                                content = Model.Posts.FirstOrDefault().Content;
+                            }
+                            content = content == null ? "" : content;
+                        }
+                    }
+                    <textarea name="Content" class="form-control">@content</textarea>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-8 offset-4">
+                    @if (Model.Id != 0)
+                    {
+                        <partial name="_EditButton" model="@Model.Id" />
+                    }
+                    else
+                    {
+                        <partial name="_CreateButton" />
+                    }
+                    <a asp-controller="Forum" asp-action="Show" asp-route-id="@Model.ForumId" class="btn btn-success">Back to List</a>
+                </div>
+            </div>
+        </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

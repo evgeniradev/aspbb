@@ -1,0 +1,8 @@
+version: '3'
+services:
+  aspbb_app:
+    build: .
+    ports:
+      - '80:80'
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
